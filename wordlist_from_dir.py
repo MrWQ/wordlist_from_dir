@@ -5,7 +5,7 @@ import sys
 import platform
 
 
-def generate_wordlist(root_dir, dir_path='', word_list=[]):
+def generate_wordlist_file(root_dir, dir_path='', word_list=[]):
     try:
         root_file_list = os.listdir(root_dir)
         for file in root_file_list:
@@ -15,7 +15,7 @@ def generate_wordlist(root_dir, dir_path='', word_list=[]):
                 word_list.append(dir_path + '/' + file)
             # 如果为文件夹则递归
             elif os.path.isdir(file_path):
-                generate_wordlist(file_path, dir_path + '/' + file, word_list)
+                generate_wordlist_file(file_path, dir_path + '/' + file, word_list)
             else:
                 pass
     except Exception as e:
@@ -23,6 +23,30 @@ def generate_wordlist(root_dir, dir_path='', word_list=[]):
 
     finally:
         return word_list
+
+
+def generate_wordlist_dir(root_dir, dir_path='', word_list=[]):
+    try:
+        root_file_list = os.listdir(root_dir)
+        for file in root_file_list:
+            file_path = root_dir + '/' + file
+            # 如果为文件则记录文件路径
+            if os.path.isfile(file_path):
+                # word_list.append(dir_path + '/' + file)
+                pass
+            # 如果为文件夹则递归
+            elif os.path.isdir(file_path):
+
+                generate_wordlist_dir(file_path, dir_path + '/' + file, word_list)
+            else:
+                pass
+    except Exception as e:
+        print(e)
+
+    finally:
+        word_list.append(dir_path + '/')
+        return word_list
+
 
 if __name__ == '__main__':
     try:
@@ -47,7 +71,10 @@ if __name__ == '__main__':
                     file_name = file_name + '.txt'
                     file_path = os.getcwd() + '\\' + file_name
                     with open(file_path, 'w') as word_file:
-                        word_list = generate_wordlist(root_dir_path)
+                        word_list_file = generate_wordlist_file(root_dir_path)
+                        # 增加文件夹的路径列表
+                        word_list_dir = generate_wordlist_dir(root_dir_path)
+                        word_list = word_list_dir + word_list_file
                         for word in word_list:
                             word_file.write(word + '\n')
                     print(file_path)
@@ -67,7 +94,7 @@ if __name__ == '__main__':
                     file_name = file_name + '.txt'
                     file_path = os.getcwd() + '/' + file_name
                     with open(file_path, 'w') as word_file:
-                        word_list = generate_wordlist(root_dir_path)
+                        word_list = generate_wordlist_file(root_dir_path)
                         for word in word_list:
                             word_file.write(word + '\n')
                     print(file_path)
